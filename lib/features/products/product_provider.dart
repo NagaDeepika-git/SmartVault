@@ -91,7 +91,9 @@ class ProductProvider extends ChangeNotifier {
 
   int get totalCount => _products.length;
   int get activeWarrantyCount => _products.where((p) => p.warrantyResult.status == WarrantyStatus.active).length;
+  int get activeWarrantiesCount => activeWarrantyCount;
   int get expiringSoonWarrantyCount => _products.where((p) => p.warrantyResult.status == WarrantyStatus.expiringSoon).length;
+  int get expiringSoonWarrantiesCount => expiringSoonWarrantyCount;
   int get expiringSoonCount => expiringSoonWarrantyCount;
   int get expiredWarrantyCount => _products.where((p) => p.warrantyResult.status == WarrantyStatus.expired).length;
   int get expiredCount => expiredWarrantyCount;
