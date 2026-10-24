@@ -92,11 +92,16 @@ class ProductProvider extends ChangeNotifier {
   int get totalCount => _products.length;
   int get activeWarrantyCount => _products.where((p) => p.warrantyResult.status == WarrantyStatus.active).length;
   int get expiringSoonWarrantyCount => _products.where((p) => p.warrantyResult.status == WarrantyStatus.expiringSoon).length;
+  int get expiringSoonCount => expiringSoonWarrantyCount;
   int get expiredWarrantyCount => _products.where((p) => p.warrantyResult.status == WarrantyStatus.expired).length;
+  int get expiredCount => expiredWarrantyCount;
 
   double get totalInventoryValue {
     return _products.fold<double>(0.0, (sum, p) => sum + (p.purchasePrice ?? 0.0));
   }
+  double get totalPortfolioValue => totalInventoryValue;
+
+  void toggleOnlyFavorites() => toggleFavoritesFilter();
 
   int countForCategory(ProductCategory category) {
     return _products.where((p) => p.category == category).length;

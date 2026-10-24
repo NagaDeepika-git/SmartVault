@@ -32,6 +32,10 @@ class ServiceProvider extends ChangeNotifier {
     return _records.fold<double>(0.0, (sum, r) => sum + r.cost);
   }
 
+  Future<void> loadRecordsForProduct(String productId) async {
+    await loadAllRecords();
+  }
+
   Future<void> loadAllRecords() async {
     _isLoading = true;
     _errorMessage = null;
