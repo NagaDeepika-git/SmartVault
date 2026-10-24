@@ -91,6 +91,16 @@ class DocumentProvider extends ChangeNotifier {
     return _documents.where((d) => d.category == category).length;
   }
 
+  Map<DocumentCategory, int> get categoryCounts {
+    final map = <DocumentCategory, int>{};
+    for (final cat in DocumentCategory.values) {
+      map[cat] = countForCategory(cat);
+    }
+    return map;
+  }
+
+  void toggleOnlyFavorites() => toggleFavoritesFilter();
+
   Future<void> loadDocuments() async {
     _isLoading = true;
     _errorMessage = null;

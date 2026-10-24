@@ -66,3 +66,30 @@ class ResponsiveLayout extends StatelessWidget {
     );
   }
 }
+
+/// Centers and constrains content width on large desktop or tablet screens.
+class ResponsiveContentContainer extends StatelessWidget {
+  final Widget child;
+  final double maxWidth;
+  final EdgeInsetsGeometry padding;
+
+  const ResponsiveContentContainer({
+    super.key,
+    required this.child,
+    this.maxWidth = ResponsiveHelper.maxContentWidth,
+    this.padding = EdgeInsets.zero,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: maxWidth),
+        child: Padding(
+          padding: padding,
+          child: child,
+        ),
+      ),
+    );
+  }
+}

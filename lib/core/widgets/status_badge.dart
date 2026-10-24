@@ -58,6 +58,17 @@ class StatusBadge extends StatelessWidget {
     }
   }
 
+  /// Factory constructor for Demo/Sample data badge.
+  factory StatusBadge.sample() {
+    return const StatusBadge(
+      label: 'Demo',
+      icon: Icons.science_outlined,
+      color: Color(0xFF94A3B8),
+      fontSize: 10.0,
+      padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final effectiveBg = backgroundColor ?? color.withValues(alpha: 0.15);
