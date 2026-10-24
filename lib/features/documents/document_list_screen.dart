@@ -74,6 +74,7 @@ class _DocumentListScreenState extends State<DocumentListScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'fab_documents',
         onPressed: () => Navigator.of(context).pushNamed(RouteNames.documentForm),
         backgroundColor: AppColors.champagne,
         foregroundColor: const Color(0xFF1A1300),

@@ -211,6 +211,7 @@ class _ReminderCenterScreenState extends State<ReminderCenterScreen>
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'fab_reminders',
         onPressed: () => _showAddReminderDialog(context),
         backgroundColor: AppColors.champagne,
         foregroundColor: const Color(0xFF1A1300),

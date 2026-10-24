@@ -40,6 +40,7 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
         title: const Text('Service & Repairs'),
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'fab_services',
         onPressed: () => Navigator.of(context).pushNamed(RouteNames.serviceForm),
         backgroundColor: AppColors.champagne,
         foregroundColor: const Color(0xFF1A1300),

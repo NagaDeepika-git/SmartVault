@@ -76,6 +76,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'fab_products',
         onPressed: () => Navigator.of(context).pushNamed(RouteNames.productForm),
         backgroundColor: AppColors.champagne,
         foregroundColor: const Color(0xFF1A1300),

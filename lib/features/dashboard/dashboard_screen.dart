@@ -90,6 +90,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
             tooltip: 'Universal Search',
             onPressed: () => Navigator.of(context).pushNamed(RouteNames.search),
           ),
+          IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            tooltip: 'Settings',
+            onPressed: () => Navigator.of(context).pushNamed(RouteNames.settings),
+          ),
           const SizedBox(width: 8),
         ],
       ),
