@@ -1,3 +1,5 @@
+import '../../core/services/attachment_service.dart';
+import '../../core/utils/date_formatter.dart';
 import '../datasources/local_database_service.dart';
 import '../models/document_model.dart';
 import '../models/product_model.dart';
@@ -33,6 +35,11 @@ class SampleDataLoader {
         purchasePrice: 3499.00,
         currency: '\$',
         seller: 'Apple Official Store',
+        imagePath: 'macbook_pro_16.png',
+        imageData: AttachmentService.createProductPhoto(
+          productName: 'MacBook Pro 16"',
+          brand: 'Apple',
+        ).base64Data,
         warrantyStartDate: now.subtract(const Duration(days: 120)),
         warrantyEndDate: now.add(const Duration(days: 610)), // Active (2 years AppleCare+)
         warrantyNotes: 'AppleCare+ Extended Protection with global hardware coverage.',
@@ -51,6 +58,11 @@ class SampleDataLoader {
         purchasePrice: 999.00,
         currency: '\$',
         seller: 'Google Store Online',
+        imagePath: 'google_pixel_9_pro.png',
+        imageData: AttachmentService.createProductPhoto(
+          productName: 'Google Pixel 9 Pro',
+          brand: 'Google',
+        ).base64Data,
         warrantyStartDate: now.subtract(const Duration(days: 347)),
         warrantyEndDate: now.add(const Duration(days: 18)), // Expiring Soon (18 days left!)
         warrantyNotes: '1-Year Limited Manufacturer Warranty. Contact Google support for claims.',
@@ -68,6 +80,11 @@ class SampleDataLoader {
         purchasePrice: 348.00,
         currency: '\$',
         seller: 'Best Buy Electronics',
+        imagePath: 'sony_wh1000xm4.png',
+        imageData: AttachmentService.createProductPhoto(
+          productName: 'WH-1000XM4 Headphones',
+          brand: 'Sony',
+        ).base64Data,
         warrantyStartDate: now.subtract(const Duration(days: 410)),
         warrantyEndDate: now.subtract(const Duration(days: 45)), // Expired 45 days ago
         warrantyNotes: 'Standard 1-year Sony North America warranty expired.',
@@ -85,6 +102,11 @@ class SampleDataLoader {
         purchasePrice: 649.99,
         currency: '\$',
         seller: 'Dyson Direct',
+        imagePath: 'dyson_purifier_hp07.png',
+        imageData: AttachmentService.createProductPhoto(
+          productName: 'Dyson Purifier HP07',
+          brand: 'Dyson',
+        ).base64Data,
         warrantyStartDate: now.subtract(const Duration(days: 200)),
         warrantyEndDate: now.add(const Duration(days: 530)), // Active 2-Year Warranty
         warrantyNotes: 'Full 2-year parts and labor warranty with Dyson in-home support.',
@@ -104,8 +126,15 @@ class SampleDataLoader {
         issuer: 'Institute of Technology',
         issueDate: DateTime(2024, 6, 15),
         expiryDate: null,
+        filePath: 'B.Tech_Computer_Science_Degree.pdf',
         fileType: 'pdf',
         fileSize: 2450000,
+        fileData: AttachmentService.createAcademicDegreeScan(
+          recipientName: 'Naga Deepika Gogineni',
+          degreeTitle: 'Bachelor of Technology in Computer Science',
+          university: 'State Institute of Engineering & Technology',
+          graduationDate: 'June 15, 2024',
+        ).base64Data,
         tags: ['degree', 'graduation', 'academic', 'engineering'],
         notes: 'Official verified digital copy with digital signature.',
         isFavorite: true,
@@ -119,8 +148,16 @@ class SampleDataLoader {
         issuer: 'Amazon Web Services',
         issueDate: now.subtract(const Duration(days: 180)),
         expiryDate: now.add(const Duration(days: 550)),
+        filePath: 'AWS_Solutions_Architect_Certificate.pdf',
         fileType: 'pdf',
         fileSize: 1120000,
+        fileData: AttachmentService.createCertificationCredentialScan(
+          certificationName: 'AWS Certified Solutions Architect - Associate',
+          issuingOrganization: 'Amazon Web Services Training & Certification',
+          credentialId: 'AWS-PSA-8392019',
+          issueDate: DateFormatter.formatDate(now.subtract(const Duration(days: 180))),
+          expiryDate: DateFormatter.formatDate(now.add(const Duration(days: 550))),
+        ).base64Data,
         tags: ['aws', 'cloud', 'certification', 'credentials'],
         notes: 'Verification ID: AWS-PSA-8392019.',
         isFavorite: true,
@@ -134,8 +171,17 @@ class SampleDataLoader {
         issuer: 'Apple Retail Store',
         issueDate: now.subtract(const Duration(days: 120)),
         expiryDate: null,
+        filePath: 'Apple_Retail_Store_Tax_Invoice.pdf',
         fileType: 'pdf',
         fileSize: 840000,
+        fileData: AttachmentService.createTaxInvoiceScan(
+          vendor: 'Apple Retail Store Inc.',
+          productName: 'MacBook Pro 16" M3 Max (36GB / 1TB)',
+          amount: 3499.00,
+          currency: '\$',
+          invoiceNumber: 'APL-INV-2024-9182',
+          purchaseDate: DateFormatter.formatDate(now.subtract(const Duration(days: 120))),
+        ).base64Data,
         tags: ['apple', 'invoice', 'receipt', 'tax'],
         notes: 'Includes proof of serial number registration.',
         productId: sampleProductIdMacBook, // Connected link to MacBook Pro!
@@ -150,8 +196,15 @@ class SampleDataLoader {
         issuer: 'Department of Foreign Affairs',
         issueDate: DateTime(2021, 4, 10),
         expiryDate: DateTime(2031, 4, 10),
-        fileType: 'jpg',
+        filePath: 'National_Passport_Scan.pdf',
+        fileType: 'pdf',
         fileSize: 1850000,
+        fileData: AttachmentService.createGovernmentIdScan(
+          idType: 'International Passport',
+          idNumber: 'P849201948',
+          fullName: 'Naga Deepika Gogineni',
+          country: 'Republic Identity',
+        ).base64Data,
         tags: ['passport', 'identity', 'travel', 'government'],
         notes: 'Keep physical book safe in safety deposit.',
         isFavorite: false,
@@ -165,8 +218,16 @@ class SampleDataLoader {
         issuer: 'BlueShield Health',
         issueDate: now.subtract(const Duration(days: 300)),
         expiryDate: now.add(const Duration(days: 65)),
+        filePath: 'BlueShield_Health_Policy_Document.pdf',
         fileType: 'pdf',
         fileSize: 3200000,
+        fileData: AttachmentService.createCertificationCredentialScan(
+          certificationName: 'BlueShield Comprehensive Gold Health Cover',
+          issuingOrganization: 'BlueShield Medical Underwriters',
+          credentialId: 'POL-BLU-92048291',
+          issueDate: DateFormatter.formatDate(now.subtract(const Duration(days: 300))),
+          expiryDate: DateFormatter.formatDate(now.add(const Duration(days: 65))),
+        ).base64Data,
         tags: ['medical', 'health', 'insurance', 'policy'],
         notes: 'Policy No: BLU-9204-8291. TPA Card attached.',
         isFavorite: false,
