@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_spacing.dart';
+import '../../core/services/attachment_service.dart';
 import '../../core/utils/validators.dart';
 import '../../core/widgets/custom_text_field.dart';
 import '../../core/widgets/responsive_layout.dart';
@@ -35,6 +36,7 @@ class _DocumentFormScreenState extends State<DocumentFormScreen> {
   String? _attachedFileName;
   String? _attachedFileType;
   int? _attachedFileSize;
+  String? _attachedFileData;
   bool _isFavorite = false;
   bool _isSubmitting = false;
 
@@ -57,6 +59,7 @@ class _DocumentFormScreenState extends State<DocumentFormScreen> {
     _attachedFileName = doc?.filePath;
     _attachedFileType = doc?.fileType;
     _attachedFileSize = doc?.fileSize;
+    _attachedFileData = doc?.fileData;
     _isFavorite = doc?.isFavorite ?? false;
 
     // Load products for linkage dropdown
@@ -74,22 +77,123 @@ class _DocumentFormScreenState extends State<DocumentFormScreen> {
     super.dispose();
   }
 
-  void _simulateAttachmentPicker(String type) {
+  void _showAttachmentOptions() {
+    final title = _titleController.text.trim().isEmpty ? 'Document' : _titleController.text.trim();
+    final issuer = _issuerController.text.trim().isEmpty ? 'Official Authority' : _issuerController.text.trim();
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        final isDark = Theme.of(ctx).brightness == Brightness.dark;
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.darkSurface : AppColors.lightSurface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Attach Verified Document', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
+                  IconButton(
+                    icon: const Icon(Icons.close_rounded, size: 20),
+                    onPressed: () => Navigator.of(ctx).pop(),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              ListTile(
+                leading: const CircleAvatar(
+                  backgroundColor: Color(0x22F5C57A),
+                  child: Icon(Icons.school_rounded, color: AppColors.champagne),
+                ),
+                title: const Text('Academic Degree / Diploma', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                subtitle: const Text('Generates official degree parchment with university seals & Latin motto', style: TextStyle(fontSize: 11)),
+                onTap: () {
+                  Navigator.of(ctx).pop();
+                  _setAttachment(AttachmentService.createAcademicDegreeScan(
+                    recipientName: 'Naga Deepika Gogineni',
+                    degreeTitle: title,
+                    university: issuer,
+                    graduationDate: 'June 15, 2024',
+                  ));
+                },
+              ),
+              ListTile(
+                leading: const CircleAvatar(
+                  backgroundColor: Color(0x22F59E0B),
+                  child: Icon(Icons.receipt_long_rounded, color: AppColors.amber),
+                ),
+                title: const Text('Tax Invoice / Purchase Receipt', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                subtitle: const Text('Generates GST retail invoice with itemized pricing & verification QR', style: TextStyle(fontSize: 11)),
+                onTap: () {
+                  Navigator.of(ctx).pop();
+                  _setAttachment(AttachmentService.createTaxInvoiceScan(
+                    vendor: issuer,
+                    productName: title,
+                    amount: 999.00,
+                    currency: '\$',
+                    invoiceNumber: 'INV-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}',
+                    purchaseDate: 'October 24, 2026',
+                  ));
+                },
+              ),
+              ListTile(
+                leading: const CircleAvatar(
+                  backgroundColor: Color(0x2238BDF8),
+                  child: Icon(Icons.badge_rounded, color: AppColors.info),
+                ),
+                title: const Text('National Identity / Passport Scan', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                subtitle: const Text('Generates secure ID document with Machine-Readable Zone (MRZ)', style: TextStyle(fontSize: 11)),
+                onTap: () {
+                  Navigator.of(ctx).pop();
+                  _setAttachment(AttachmentService.createGovernmentIdScan(
+                    idType: title,
+                    idNumber: 'P849201948',
+                    fullName: 'Naga Deepika Gogineni',
+                    country: issuer,
+                  ));
+                },
+              ),
+              ListTile(
+                leading: const CircleAvatar(
+                  backgroundColor: Color(0x2210B981),
+                  child: Icon(Icons.camera_alt_rounded, color: AppColors.success),
+                ),
+                title: const Text('Digital Optical Camera Scan', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                subtitle: const Text('300 DPI high-contrast optical paper scan with timestamp', style: TextStyle(fontSize: 11)),
+                onTap: () {
+                  Navigator.of(ctx).pop();
+                  _setAttachment(AttachmentService.createCapturedDocumentPhoto(
+                    title: title,
+                    category: _selectedCategory.label,
+                  ));
+                },
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _setAttachment(AttachmentFile file) {
     setState(() {
-      if (type == 'pdf') {
-        _attachedFileName = 'document_${DateTime.now().millisecondsSinceEpoch}.pdf';
-        _attachedFileType = 'pdf';
-        _attachedFileSize = 1450000; // ~1.45 MB
-      } else {
-        _attachedFileName = 'receipt_scan_${DateTime.now().millisecondsSinceEpoch}.jpg';
-        _attachedFileType = 'jpg';
-        _attachedFileSize = 2800000; // ~2.8 MB
-      }
+      _attachedFileName = file.name;
+      _attachedFileType = file.fileType;
+      _attachedFileSize = file.fileSize;
+      _attachedFileData = file.base64Data;
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Attached $_attachedFileName (${type.toUpperCase()})'),
+        content: Text('Attached ${file.name} (${file.fileType.toUpperCase()})'),
         backgroundColor: AppColors.darkSurface,
         behavior: SnackBarBehavior.floating,
       ),
@@ -101,6 +205,7 @@ class _DocumentFormScreenState extends State<DocumentFormScreen> {
       _attachedFileName = null;
       _attachedFileType = null;
       _attachedFileSize = null;
+      _attachedFileData = null;
     });
   }
 
@@ -143,6 +248,7 @@ class _DocumentFormScreenState extends State<DocumentFormScreen> {
         filePath: _attachedFileName,
         fileType: _attachedFileType,
         fileSize: _attachedFileSize,
+        fileData: _attachedFileData,
         tags: rawTags,
         notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
         productId: _selectedProductId,
@@ -159,6 +265,7 @@ class _DocumentFormScreenState extends State<DocumentFormScreen> {
         filePath: _attachedFileName,
         fileType: _attachedFileType,
         fileSize: _attachedFileSize,
+        fileData: _attachedFileData,
         tags: rawTags,
         notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
         productId: _selectedProductId,
@@ -404,32 +511,19 @@ class _DocumentFormScreenState extends State<DocumentFormScreen> {
                       ),
                     )
                   else
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            onPressed: () => _simulateAttachmentPicker('pdf'),
-                            icon: const Icon(Icons.picture_as_pdf_outlined, size: 18),
-                            label: const Text('Attach PDF'),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: AppColors.champagne,
-                              side: BorderSide(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
-                            ),
-                          ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: _showAttachmentOptions,
+                        icon: const Icon(Icons.attach_file_rounded, size: 20),
+                        label: const Text('Add Document Scan or Digital Certificate', style: TextStyle(fontWeight: FontWeight.w700)),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.champagne,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          side: BorderSide(color: AppColors.champagne.withValues(alpha: 0.6)),
+                          shape: RoundedRectangleBorder(borderRadius: AppRadius.radiusMd),
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            onPressed: () => _simulateAttachmentPicker('jpg'),
-                            icon: const Icon(Icons.camera_alt_outlined, size: 18),
-                            label: const Text('Attach Image'),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: AppColors.champagne,
-                              side: BorderSide(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                 ],
               ),
