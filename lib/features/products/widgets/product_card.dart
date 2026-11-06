@@ -56,14 +56,36 @@ class ProductCard extends StatelessWidget {
                 width: 46,
                 height: 46,
                 decoration: BoxDecoration(
-                  color: AppColors.champagne.withValues(alpha: 0.14),
+                  color: product.hasImage
+                      ? AppColors.champagne.withValues(alpha: 0.22)
+                      : AppColors.champagne.withValues(alpha: 0.14),
                   borderRadius: AppRadius.radiusMd,
                   border: Border.all(
-                    color: AppColors.champagne.withValues(alpha: 0.35),
-                    width: 1.0,
+                    color: product.hasImage
+                        ? AppColors.champagne
+                        : AppColors.champagne.withValues(alpha: 0.35),
+                    width: product.hasImage ? 1.5 : 1.0,
                   ),
                 ),
-                child: Icon(_getProductIcon(product.category), color: AppColors.champagne, size: 24),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Icon(_getProductIcon(product.category), color: AppColors.champagne, size: 24),
+                    if (product.hasImage)
+                      Positioned(
+                        right: 2,
+                        bottom: 2,
+                        child: Container(
+                          width: 8,
+                          height: 8,
+                          decoration: const BoxDecoration(
+                            color: AppColors.success,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ),
               const SizedBox(width: 14),
 

@@ -186,6 +186,50 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       ),
                     ),
                   ],
+                  if (product.hasImage) ...[
+                    const SizedBox(height: 16),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: isDark ? AppColors.darkSurfaceLight : AppColors.lightSurfaceAlt,
+                        borderRadius: AppRadius.radiusMd,
+                        border: Border.all(color: AppColors.champagne.withValues(alpha: 0.25)),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 44,
+                            height: 44,
+                            decoration: BoxDecoration(
+                              color: AppColors.champagne.withValues(alpha: 0.2),
+                              borderRadius: AppRadius.radiusSm,
+                            ),
+                            child: const Icon(Icons.photo_camera_rounded, color: AppColors.champagne, size: 24),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  product.imagePath ?? 'Asset Photo',
+                                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const Text(
+                                  'Physical Asset Proof • Verified in Vault',
+                                  style: TextStyle(fontSize: 11, color: AppColors.success),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Icon(Icons.verified_rounded, color: AppColors.champagne, size: 20),
+                        ],
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
