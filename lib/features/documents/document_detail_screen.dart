@@ -11,6 +11,7 @@ import '../../data/models/document_model.dart';
 import '../products/product_provider.dart';
 import 'document_provider.dart';
 import 'document_form_screen.dart';
+import 'widgets/document_preview_sheet.dart';
 
 /// Detailed view for a single Document in SmartVault.
 /// Displays complete metadata, tags, attachment preview modal, and connected product navigation.
@@ -52,86 +53,7 @@ class DocumentDetailScreen extends StatelessWidget {
   }
 
   void _showAttachmentPreview(BuildContext context, DocumentModel doc) {
-    showDialog(
-      context: context,
-      builder: (ctx) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: AppRadius.radiusLg),
-        child: Container(
-          padding: const EdgeInsets.all(24.0),
-          constraints: const BoxConstraints(maxWidth: 480),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Attachment Preview',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close_rounded),
-                    onPressed: () => Navigator.of(ctx).pop(),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Container(
-                height: 200,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: AppColors.darkSurfaceLight,
-                  borderRadius: AppRadius.radiusMd,
-                  border: Border.all(color: AppColors.champagne.withValues(alpha: 0.3)),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      doc.fileType == 'pdf' ? Icons.picture_as_pdf_rounded : Icons.image_rounded,
-                      size: 64,
-                      color: AppColors.champagne,
-                    ),
-                    const SizedBox(height: 12),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Text(
-                        doc.filePath ?? 'document_scan.pdf',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Verified Local Attachment • ${doc.formattedFileSize}',
-                      style: const TextStyle(fontSize: 11, color: AppColors.textMutedDark),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.of(ctx).pop();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Exported ${doc.filePath ?? doc.title} to local downloads')),
-                    );
-                  },
-                  icon: const Icon(Icons.file_download_outlined, size: 18),
-                  label: const Text('Export / Share Document'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.champagne,
-                    foregroundColor: const Color(0xFF1A1300),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+    DocumentPreviewSheet.show(context, doc);
   }
 
   @override
@@ -403,41 +325,49 @@ class DocumentDetailScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   if (doc.hasAttachment)
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: isDark ? AppColors.darkSurfaceLight : AppColors.lightSurfaceAlt,
-                        borderRadius: AppRadius.radiusMd,
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            doc.fileType == 'pdf' ? Icons.picture_as_pdf_rounded : Icons.image_rounded,
-                            color: AppColors.champagne,
-                            size: 28,
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  doc.filePath ?? 'document.pdf',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
-                                ),
-                                Text(
-                                  'Format: ${doc.fileType?.toUpperCase()} • Size: ${doc.formattedFileSize}',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
-                                  ),
-                                ),
-                              ],
+                    InkWell(
+                      onTap: () => _showAttachmentPreview(context, doc),
+                      borderRadius: AppRadius.radiusMd,
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: isDark ? AppColors.darkSurfaceLight : AppColors.lightSurfaceAlt,
+                          borderRadius: AppRadius.radiusMd,
+                          border: Border.all(color: AppColors.champagne.withValues(alpha: 0.3)),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              doc.fileType == 'pdf' ? Icons.picture_as_pdf_rounded : Icons.image_rounded,
+                              color: AppColors.champagne,
+                              size: 32,
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    doc.filePath ?? 'document.pdf',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    '${doc.fileType?.toUpperCase() ?? "PDF"} • ${doc.formattedFileSize.isNotEmpty ? doc.formattedFileSize : "Verified Vault Record"} • Tap to Preview',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: isDark ? AppColors.champagne : const Color(0xFF8B6B1B),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Icon(Icons.open_in_full_rounded, size: 18, color: AppColors.champagne),
+                          ],
+                        ),
                       ),
                     )
                   else
