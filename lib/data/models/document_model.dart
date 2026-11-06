@@ -36,6 +36,7 @@ class DocumentModel {
   final String? filePath;
   final String? fileType;
   final int? fileSize;
+  final String? fileData; // Persistent Base64 file content or SVG/data representation
   final List<String> tags;
   final String? notes;
   final String? productId; // Connected module link: binds document to an asset/product
@@ -55,6 +56,7 @@ class DocumentModel {
     this.filePath,
     this.fileType,
     this.fileSize,
+    this.fileData,
     List<String>? tags,
     this.notes,
     this.productId,
@@ -67,7 +69,11 @@ class DocumentModel {
         createdAt = createdAt ?? DateTime.now(),
         updatedAt = updatedAt ?? DateTime.now();
 
-  bool get hasAttachment => filePath != null && filePath!.isNotEmpty;
+  bool get hasAttachment =>
+      (filePath != null && filePath!.isNotEmpty) ||
+      (fileData != null && fileData!.isNotEmpty);
+
+  bool get hasFileData => fileData != null && fileData!.isNotEmpty;
 
   bool get isExpired {
     if (expiryDate == null) return false;
@@ -102,6 +108,7 @@ class DocumentModel {
     String? filePath,
     String? fileType,
     int? fileSize,
+    String? fileData,
     List<String>? tags,
     String? notes,
     String? productId,
@@ -121,6 +128,7 @@ class DocumentModel {
       filePath: filePath ?? this.filePath,
       fileType: fileType ?? this.fileType,
       fileSize: fileSize ?? this.fileSize,
+      fileData: fileData ?? this.fileData,
       tags: tags ?? this.tags,
       notes: notes ?? this.notes,
       productId: productId ?? this.productId,
@@ -143,6 +151,7 @@ class DocumentModel {
       'file_path': filePath,
       'file_type': fileType,
       'file_size': fileSize,
+      'file_data': fileData,
       'tags': tags.join(','),
       'notes': notes,
       'product_id': productId,
@@ -165,6 +174,7 @@ class DocumentModel {
       filePath: map['file_path'] as String?,
       fileType: map['file_type'] as String?,
       fileSize: map['file_size'] as int?,
+      fileData: map['file_data'] as String?,
       tags: map['tags'] != null && (map['tags'] as String).isNotEmpty
           ? (map['tags'] as String).split(',')
           : [],

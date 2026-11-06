@@ -36,6 +36,7 @@ class ProductModel {
   final String currency;
   final String? seller;
   final String? imagePath;
+  final String? imageData; // Base64 product photo representation
   final DateTime? warrantyStartDate;
   final DateTime? warrantyEndDate;
   final String? warrantyNotes;
@@ -58,6 +59,7 @@ class ProductModel {
     this.currency = '\$',
     this.seller,
     this.imagePath,
+    this.imageData,
     this.warrantyStartDate,
     this.warrantyEndDate,
     this.warrantyNotes,
@@ -70,6 +72,10 @@ class ProductModel {
   })  : id = id ?? const Uuid().v4(),
         createdAt = createdAt ?? DateTime.now(),
         updatedAt = updatedAt ?? DateTime.now();
+
+  bool get hasImage =>
+      (imagePath != null && imagePath!.isNotEmpty) ||
+      (imageData != null && imageData!.isNotEmpty);
 
   /// Calculates real-time date-based warranty metrics using WarrantyCalculator.
   WarrantyResult get warrantyResult {
@@ -107,6 +113,7 @@ class ProductModel {
     String? currency,
     String? seller,
     String? imagePath,
+    String? imageData,
     DateTime? warrantyStartDate,
     DateTime? warrantyEndDate,
     String? warrantyNotes,
@@ -129,6 +136,7 @@ class ProductModel {
       currency: currency ?? this.currency,
       seller: seller ?? this.seller,
       imagePath: imagePath ?? this.imagePath,
+      imageData: imageData ?? this.imageData,
       warrantyStartDate: warrantyStartDate ?? this.warrantyStartDate,
       warrantyEndDate: warrantyEndDate ?? this.warrantyEndDate,
       warrantyNotes: warrantyNotes ?? this.warrantyNotes,
@@ -154,6 +162,7 @@ class ProductModel {
       'currency': currency,
       'seller': seller,
       'image_path': imagePath,
+      'image_data': imageData,
       'warranty_start_date': warrantyStartDate?.toIso8601String(),
       'warranty_end_date': warrantyEndDate?.toIso8601String(),
       'warranty_notes': warrantyNotes,
@@ -179,6 +188,7 @@ class ProductModel {
       currency: (map['currency'] as String?) ?? '\$',
       seller: map['seller'] as String?,
       imagePath: map['image_path'] as String?,
+      imageData: map['image_data'] as String?,
       warrantyStartDate: map['warranty_start_date'] != null
           ? DateTime.tryParse(map['warranty_start_date'] as String)
           : null,
