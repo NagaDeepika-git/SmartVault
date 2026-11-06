@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_spacing.dart';
+import '../../core/services/attachment_service.dart';
 import '../../core/utils/validators.dart';
 import '../../core/widgets/custom_text_field.dart';
 import '../../core/widgets/responsive_layout.dart';
@@ -36,6 +37,8 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   DateTime? _warrantyEndDate;
   String _selectedCurrency = '\$';
   String? _selectedInvoiceDocId;
+  String? _imagePath;
+  String? _imageData;
   bool _isFavorite = false;
   bool _isSubmitting = false;
 
@@ -60,11 +63,38 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
     _warrantyEndDate = p?.warrantyEndDate;
     _selectedCurrency = p?.currency ?? '\$';
     _selectedInvoiceDocId = p?.invoiceDocumentId;
+    _imagePath = p?.imagePath;
+    _imageData = p?.imageData;
     _isFavorite = p?.isFavorite ?? false;
 
     // Load documents for invoice linkage dropdown
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<DocumentProvider>().loadDocuments();
+    });
+  }
+
+  void _attachProductPhoto() {
+    final name = _nameController.text.trim().isEmpty ? 'Asset' : _nameController.text.trim();
+    final brand = _brandController.text.trim().isEmpty ? 'Brand' : _brandController.text.trim();
+    final photo = AttachmentService.createProductPhoto(productName: name, brand: brand);
+    setState(() {
+      _imagePath = photo.name;
+      _imageData = photo.base64Data;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Attached photo for $name'),
+        backgroundColor: AppColors.darkSurface,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  void _removeProductPhoto() {
+    setState(() {
+      _imagePath = null;
+      _imageData = null;
     });
   }
 
@@ -122,6 +152,8 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
         warrantyEndDate: _warrantyEndDate,
         warrantyNotes: _warrantyNotesController.text.trim().isEmpty ? null : _warrantyNotesController.text.trim(),
         invoiceDocumentId: _selectedInvoiceDocId,
+        imagePath: _imagePath,
+        imageData: _imageData,
         isFavorite: _isFavorite,
       );
       success = await provider.updateProduct(updated);
@@ -140,6 +172,8 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
         warrantyEndDate: _warrantyEndDate,
         warrantyNotes: _warrantyNotesController.text.trim().isEmpty ? null : _warrantyNotesController.text.trim(),
         invoiceDocumentId: _selectedInvoiceDocId,
+        imagePath: _imagePath,
+        imageData: _imageData,
         isFavorite: _isFavorite,
         isSample: false,
       );
@@ -378,6 +412,84 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                 hint: 'e.g. AppleCare+ 2-Year global hardware coverage, accidental damage...',
                 prefixIcon: Icons.shield_outlined,
                 maxLines: 2,
+              ),
+              const SizedBox(height: 18),
+
+              // Asset Photo Attachment
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Asset Photo / Physical Verification',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  if (_imageData != null || _imagePath != null)
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: isDark ? AppColors.darkSurface : AppColors.lightSurface,
+                        borderRadius: AppRadius.radiusMd,
+                        border: Border.all(color: AppColors.champagne.withValues(alpha: 0.4)),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 48,
+                            height: 48,
+                            decoration: BoxDecoration(
+                              color: AppColors.champagne.withValues(alpha: 0.15),
+                              borderRadius: AppRadius.radiusSm,
+                            ),
+                            child: const Icon(Icons.photo_camera_rounded, color: AppColors.champagne, size: 24),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  _imagePath ?? 'asset_photo.jpg',
+                                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 2),
+                                const Text(
+                                  'Photo attached & securely stored in Vault',
+                                  style: TextStyle(fontSize: 12, color: AppColors.success),
+                                ),
+                              ],
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.close_rounded, color: AppColors.error, size: 20),
+                            tooltip: 'Remove photo',
+                            onPressed: _removeProductPhoto,
+                          ),
+                        ],
+                      ),
+                    )
+                  else
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: _attachProductPhoto,
+                        icon: const Icon(Icons.add_a_photo_outlined, size: 18),
+                        label: const Text('Capture or Attach Asset Photo'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.champagne,
+                          side: BorderSide(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
+                          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                          shape: RoundedRectangleBorder(borderRadius: AppRadius.radiusMd),
+                        ),
+                      ),
+                    ),
+                ],
               ),
               const SizedBox(height: 18),
 
