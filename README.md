@@ -1,17 +1,11 @@
 # SmartVault — Personal Records & Intelligent Asset Vault
+### A smarter way to organize personal documents, manage product warranties, and keep track of important records — all in one place.
 
-GitHub Repository: https://github.com/NagaDeepika-git/SmartVault
+SmartVault is a Flutter-based mobile application that brings personal documents and product information together in one organized digital space.
 
-SmartVault is a local-first Flutter and Dart application that unifies personal document management, product warranty tracking, and service history management into a single connected platform.
+It allows users to store important documents, manage product details, track warranty periods, maintain service records, and keep track of important reminders. Instead of searching through scattered files and folders, users can access and manage their records from a single application.
 
-### Problem Solved and Purpose
-Users frequently misplace paper receipts, academic certificates, professional credentials, and appliance invoices across drawers and scattered cloud folders. When an asset malfunctions or expires, proof of purchase is difficult to locate, causing missed warranty deadlines and uncoordinated repair history.
-
-SmartVault solves this through connected records:
-- **Unified Document Archiving:** Stores certificates, identification cards, and tax invoices alongside attachment integrity checks and interactive preview sheets.
-- **Asset Lifecycle Tracking:** Tracks consumer electronics and appliances with purchase details, purchase prices, seller info, and masked serial numbers.
-- **Warranty and Service Integration:** Calculates remaining warranty days in real time and links physical products directly to their corresponding purchase invoice and chronological maintenance records.
-- **Local Storage Capabilities:** Operates offline-first using local key-value storage (`SharedPreferences`) to serialize structured JSON collections and Base64-encoded attachment strings.
+Built with an offline-first approach, SmartVault makes personal record management more organized, accessible, and convenient.
 
 ---
 
@@ -45,10 +39,6 @@ SmartVault solves this through connected records:
 ---
 
 ## Flutter Lab Experiments — Code and Outputs
-
-This section documents all 10 Flutter Lab syllabus experiments (20 subparts) mapped directly to implementations in the SmartVault codebase.
-
----
 
 ### Experiment 1(a): Install Flutter and Dart SDK
 
